@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet"
+	th:href="@{https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css}"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
+
+
+<title>Login Success</title>
+
+
+
+</head>
+<body>
+
+	<div style="width: 50%; margin: 5% 0 0 25%">
+		<h1 th:text="'歡迎'+${session.adminName}+'登入!'">XXX</h1>
+	</div>
+
+
+	<div style="width: 50%; margin: 5% 0 0 25%">
+		<button type="button" class="btn btn-primary" data-toggle="modal"
+			data-target="#Add" style="margin-bottom: 1%">新增會員</button>
+
+
+	</div>
+	<div style="width: 50%; margin: 0 0 0 25%">
+		<table class="table table-bordered" style="text-align: center"
+			id="myTable">
+			<thead>
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">使用者姓名</th>
+					<th scope="col">性別</th>
+					<th scope="col">註冊日期</th>
+					<th scope="col">修改</th>
+					<th scope="col">刪除</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="AllMember: ${queryAllMember}">
+					<td th:text="${AllMember.member_id}">id</td>
+					<td th:text="${AllMember.member_username}">姓名</td>
+					<td th:text="${AllMember.member_gender}">性別</td>
+					<td
+						th:text="${#dates.format(AllMember.date,'yyyy-MM-dd HH:mm:ss')}">日期</td>
+					<td>
+						<form th:action="@{/updateMember}" method="Post">
+							<button type="button" class="btn btn-primary btn-sm update"
+								data-toggle="modal" data-target="#exampleModalCenter"
+								style="margin-bottom: 1%">修改會員</button>
+						</form>
+					</td>
+
+					<td>
+						<form th:action="@{/deleteMember}" method="Post">
+							<button type="button" class="btn btn-primary btn-sm"
+								th:value="${AllMember.member_id}" name="member_id">刪除會員
+							</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<!--update Modal -->
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1"
+		role="dialog" aria-labelledby="exampleModalCenterTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">修改會員</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" id="MemberData">
+					<form th:action="@{/updateMember}" th:object="${member}"
+						method="Post">
+						<div class="form-group">
+							id<input class="form-control" data-set="id"
+								th:field="*{member_id}" readonly>
+						</div>
+						<div class="form-group">
+							姓名<input class="form-control" data-set="name"
+								th:field="*{member_username}" placeholder="name"
+								required="required">
+						</div>
+						<div class="form-group">
+							性別 <select class="custom-select custom-select-lg mb-3"
+								th:field="*{member_gender}" data-set="gender">
+								<option th:value="'男'" th:text="男"
+									th:selected="${member_gender=='男'}"></option>
+								<option th:value="'女'" th:text="女"
+									th:selected="${member_gender=='女'}"></option>
+							</select>
+						</div>
+						<div class="modal-footer">
+							<button type=submit class="btn btn-primary">儲存</button>
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<span data-set="id"></span>
+	<span data-set="name"></span>
+	<span data-set="gender"></span>
+
+
+	<!-- Add Modal -->
+	<div class="modal fade" id="Add" tabindex="-1" role="dialog"
+		aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">新增會員</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/insertMember}" th:object="${member}"
+						method="Post">
+
+						<div class="form-group">
+							姓名<input class="form-control" th:field="*{member_username}"
+								required="required">
+						</div>
+						<div class="form-group">
+							性別 <select class="custom-select custom-select-lg mb-3"
+								th:field="*{member_gender}">
+								<option th:value="'男'" th:text="男"></option>
+								<option th:value="'女'" th:text="女"></option>
+							</select>
+						</div>
+						<div class="modal-footer">
+							<button type=submit class="btn btn-primary">儲存</button>
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">關閉</button>
+						</div>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<script
+		src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+
+
+	<script
+		th:src="@{https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js}"
+		integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+		crossorigin="anonymous"></script>
+
+	<script
+		th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js}"
+		integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+		crossorigin="anonymous"></script>
+
+	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script>
+		$(document).ready(function() {
+			$('#myTable').DataTable({
+				"columnDefs" : [ {
+					//设置第1,2,3列不参与搜索
+					"targets" : [ 1, 2, 3 ],
+					"searchable" : false
+				} ]
+			});
+		});
+	</script>
+	<script>
+		$('#myTable').on('click', '.update', function() {
+			var currentRow = $(this).closest("tr");
+			var col1 = currentRow.find("td:eq(0)").text(); //獲得第1個表格單元格TD值
+			var col2 = currentRow.find("td:eq(1)").text(); //獲得第2個表格單元格TD值
+			var col3 = currentRow.find("td:eq(2)").text(); //獲得第3個表格單元格TD值
+			const person = {
+				id : col1,
+				name : col2,
+				gender : col3
+			};
+			console.log(person)
+			Object.keys(person).forEach(function(key) {
+				$(`[data-set="${key}"]`).val(person[key]);
+			});
+		})
+	</script>
+
+<script>
+function deleteMember(){
+Swal.fire({
+	  title: '確定要刪除嗎?',
+	  icon: 'warning',
+	  showCancelButton: true,
+	  confirmButtonColor: '#3085d6',
+	  cancelButtonColor: '#d33',
+	  confirmButtonText: '確認!',
+	  cancelButtonText: '取消!'
+	}).then((result) => {
+	  if (result.isConfirmed) {
+	    Swal.fire(
+	      '刪除成功!',
+	      '會員已被刪除',
+	      'success'
+// 	    this.form.submit()
+	    )
+	  }
+	  return false;
+	  })
+}
+</script>
+
+
+
+
+</body>
+</html>
